@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.ssafy.trip.dao.AttractionInfoDAO">
+	<resultMap id="AttractionDTOMap" type="com.ssafy.trip.dto.AttractionDTO">
+		<result column="content_id" property="content_id" />
+		<result column="content_type_id" property="content_type_id" />
+		<result column="sido_code" property="sido_code" />
+		<result column="gugun_code" property="gugun_code" />
+		<result column="title" property="title" />
+		<result column="addr1" property="addr1" />
+		<result column="addr2" property="addr2" />
+		<result column="zipcode" property="zipcode" />
+		<result column="tel" property="tel" />
+		<result column="first_image" property="first_image" />
+		<result column="first_image2" property="first_image2" />
+		<result column="mlevel" property="mlevel" />
+		<result column="latitude" property="latitude" />
+		<result column="longitude" property="longitude" />
+		<result column="overview" property="description" />
+		<association column="sido_name" property="sidoString"
+			select="getSidoAndGugunName" />
+	</resultMap>
+	
+	<select id="getAttractionInfoList" resultMap="AttractionDTOMap" parameterType="attractionSidoGugunDTO">
+		select *
+		from attraction_info ai
+		inner join attraction_description ad on ai.content_id = ad.content_id
+		<where>
+			ai.sido_code = #{sido_code}
+			and ai.gugun_code = #{gugun_code}
+			<if test="searchContentId != 0">
+				and ai.content_type_id = #{searchContentId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getSidoAndGugunName" resultType="attractionDTO" parameterType="attractionSidoGugunDTO">
+		SELECT s.sido_name
+		FROM attraction_info a
+		JOIN gugun g ON a.gugun_code = g.gugun_code AND a.sido_code = g.sido_code
+		<!-- JOIN sido s ON a.sido_code = s.sido_code -->
+		where s.sido_code = #{sido_code} and g.gugun_code = #{gugun_code}
+		limit 1;
+	</select>
+
+
+
+	<select id="getAttractionInfo" resultType="attractionDTO"
+		parameterType="attractionSidoGugunDTO">
+		SELECT *
+		FROM attraction_info ai
+		INNER JOIN attraction_description ad ON ai.content_id = ad.content_id
+		WHERE ai.sido_code = #{sido_code}
+		AND ai.gugun_code = #{gugun_code}
+		<foreach collection="columns" item="column" open=" AND "
+			separator=" AND ">
+			AND ${column} IS NOT NULL
+		</foreach>
+		LIMIT 1;
+	</select>
+</mapper>

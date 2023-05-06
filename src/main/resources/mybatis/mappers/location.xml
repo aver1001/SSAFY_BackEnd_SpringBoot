@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.trip.dao.LocationDAO">
+	<select id="getLocation" resultType="locationDTO" parameterType="attractionSidoGugunDTO">
+		select * from sido si, gugun gu where si.sido_code = gu.sido_code and si.sido_code = #{sido_code} and gu.gugun_code = #{sido_code}
+	</select>
+	
+	<select id="getLocationSido" resultType="locationDTO">
+		select * from Sido
+	</select>
+	
+	<select id="getLocationGugun" resultType="locationDTO" parameterType="attractionSidoGugunDTO">
+		select * from gugun where sido_code = #{sido_code}
+	</select>
+</mapper>
